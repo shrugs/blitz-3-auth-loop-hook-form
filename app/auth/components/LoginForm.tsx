@@ -1,8 +1,10 @@
 import { AuthenticationError, Link, useMutation } from "blitz"
-import { LabeledTextField } from "app/core/components/LabeledTextField"
 import { Form, FORM_ERROR } from "app/core/components/Form"
 import login from "app/auth/mutations/login"
 import { Login } from "app/auth/validations"
+import { Container, Heading } from "@chakra-ui/layout"
+import { Button } from "@chakra-ui/button"
+import { Field } from "app/core/components/Field"
 
 type LoginFormProps = {
   onSuccess?: () => void
@@ -12,8 +14,8 @@ export const LoginForm = (props: LoginFormProps) => {
   const [loginMutation] = useMutation(login)
 
   return (
-    <div>
-      <h1>Login</h1>
+    <Container>
+      <Heading as="h1">Login</Heading>
 
       <Form
         submitText="Login"
@@ -34,20 +36,16 @@ export const LoginForm = (props: LoginFormProps) => {
             }
           }
         }}
-      >
-        <LabeledTextField name="email" label="Email" placeholder="Email" />
-        <LabeledTextField name="password" label="Password" placeholder="Password" type="password" />
-        <div>
-          <Link href="/forgot-password">
-            <a>Forgot your password?</a>
+        actions={
+          <Link href="/signup" passHref>
+            <Button variant="link">or sign up</Button>
           </Link>
-        </div>
+        }
+      >
+        <Field name="email" type="email" label="Email" placeholder="Email" />
+        <Field name="password" type="password" label="Password" placeholder="Password" />
       </Form>
-
-      <div style={{ marginTop: "1rem" }}>
-        Or <Link href="/signup">Sign Up</Link>
-      </div>
-    </div>
+    </Container>
   )
 }
 

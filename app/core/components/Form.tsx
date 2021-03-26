@@ -1,3 +1,6 @@
+import { Alert } from "@chakra-ui/alert"
+import { Button, ButtonGroup } from "@chakra-ui/button"
+import { VStack } from "@chakra-ui/layout"
 import { useState, ReactNode, PropsWithoutRef } from "react"
 import { FormProvider, useForm, UseFormOptions } from "react-hook-form"
 import * as z from "zod"
@@ -8,6 +11,8 @@ export interface FormProps<S extends z.ZodType<any, any>>
   children?: ReactNode
   /** Text to display in the submit button */
   submitText?: string
+  /** Additional actions */
+  actions?: ReactNode
   schema?: S
   onSubmit: (values: z.infer<S>) => Promise<void | OnSubmitResult>
   initialValues?: UseFormOptions<z.infer<S>>["defaultValues"]
@@ -23,6 +28,7 @@ export const FORM_ERROR = "FORM_ERROR"
 export function Form<S extends z.ZodType<any, any>>({
   children,
   submitText,
+  actions,
   schema,
   initialValues,
   onSubmit,
@@ -63,26 +69,19 @@ export function Form<S extends z.ZodType<any, any>>({
         className="form"
         {...props}
       >
-        {/* Form fields supplied as children are rendered here */}
-        {children}
+        <VStack spacing={4} align="start">
+          {/* Form fields supplied as children are rendered here */}
+          {children}
 
-        {formError && (
-          <div role="alert" style={{ color: "red" }}>
-            {formError}
-          </div>
-        )}
+          {formError && <Alert status="error">{formError}</Alert>}
 
-        {submitText && (
-          <button type="submit" disabled={ctx.formState.isSubmitting}>
-            {submitText}
-          </button>
-        )}
-
-        <style global jsx>{`
-          .form > * + * {
-            margin-top: 1rem;
-          }
-        `}</style>
+          <ButtonGroup spacing={2}>
+            <Button type="submit" isLoading={ctx.formState.isSubmitting}>
+              {submitText}
+            </Button>
+            {actions}
+          </ButtonGroup>
+        </VStack>
       </form>
     </FormProvider>
   )
